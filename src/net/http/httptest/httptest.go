@@ -52,20 +52,31 @@ func NewRequest(method, target string, body io.Reader) *http.Request {
 	req.ProtoMinor = 1
 	req.Close = false
 
-	if body != nil {
-		switch v := body.(type) {
-		case *bytes.Buffer:
+	switch v := body.(type) {
+	case *bytes.Buffer:
+		if v != nil {
 			req.ContentLength = int64(v.Len())
-		case *bytes.Reader:
+		}
+	case *bytes.Reader:
+		if v != nil {
 			req.ContentLength = int64(v.Len())
-		case *strings.Reader:
+		}
+	case *strings.Reader:
+		if v != nil {
 			req.ContentLength = int64(v.Len())
-		default:
+		}
+	default:
+		if v != nil {
 			req.ContentLength = -1
 		}
-		if rc, ok := body.(io.ReadCloser); ok {
+	}
+
+	if rc, ok := body.(io.ReadCloser); ok {
+		if rc != nil {
 			req.Body = rc
-		} else {
+		}
+	} else {
+		if rc != nil {
 			req.Body = ioutil.NopCloser(body)
 		}
 	}
